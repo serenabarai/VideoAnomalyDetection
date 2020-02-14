@@ -3,8 +3,8 @@ import numpy as np
 
 def sliding_window(arr, size, stride):
     num_chunks = int((len(arr) - size) / stride) + 2
-    print("Number of chunks",num_chunks) #110.25
-    print("Array lenght", len(arr)) #1748
+    # print("Number of chunks",num_chunks) #110.25
+    # print("Array lenght", len(arr)) #1748
     result = []
     for i in range(0,  num_chunks * stride, stride):
         if len(arr[i:i + size]) > 0:

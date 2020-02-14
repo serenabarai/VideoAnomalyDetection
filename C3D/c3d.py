@@ -12,13 +12,14 @@ import keras.backend as K
 from keras.models import Sequential
 from keras.models import Model
 from keras.layers.core import Dense, Dropout, Flatten
-import configuration as cfg
+# import configuration as cfg
 from keras.layers.convolutional import Conv3D, MaxPooling3D, ZeroPadding3D
 import numpy as np
 from scipy.misc import imresize
 from keras.utils.data_utils import get_file
 
-C3D_MEAN_PATH = 'https://github.com/adamcasson/c3d/releases/download/v0.1/c3d_mean.npy'
+# C3D_MEAN_PATH = 'https://github.com/adamcasson/c3d/releases/download/v0.1/c3d_mean.npy'
+# C3D_MEAN_PATH = 'c3d_mean.npy'
 
 def preprocess_input(video):
     """Resize and subtract mean from video input
@@ -41,19 +42,18 @@ def preprocess_input(video):
         img = imresize(img, (128, 171), 'bicubic')
         reshape_frames[i, :, :, :] = img
 
-    mean_path = get_file('c3d_mean.npy',
-                         C3D_MEAN_PATH,
-                         cache_subdir='models',
-                         md5_hash='08a07d9761e76097985124d9e8b2fe34')
+    # mean_path = get_file('c3d_mean.npy',                         
+    #                      cache_subdir='models',
+    #                      md5_hash='08a07d9761e76097985124d9e8b2fe34')
 
     # Subtract mean   -- need to be changed
-    mean = np.load(mean_path)
+    mean = np.load("./c3d/c3d_mean.npy")
     reshape_frames -= mean
     # Crop to 112x112
     reshape_frames = reshape_frames[:, 8:120, 30:142, :]
     # Add extra dimension for samples
     # reshape_frames = np.expand_dims(reshape_frames, axis=0)
-    print("Shape after c3d preprocessing ", reshape_frames.shape)
+    # print("Shape after c3d preprocessing ", reshape_frames.shape)
     return reshape_frames
 
 
@@ -105,7 +105,7 @@ def C3D(weights='sports1M'):
     model.add(Dense(487, activation='softmax', name='fc8'))
 
     if weights == 'sports1M':
-        model.load_weights(cfg.c3d_model_weights)
+        model.load_weights("c3d_sports1m.h5")
     
     return model
 

@@ -15,11 +15,8 @@ from keras.layers.core import Dense, Dropout, Flatten
 # import configuration as cfg
 from keras.layers.convolutional import Conv3D, MaxPooling3D, ZeroPadding3D
 import numpy as np
-from scipy.misc import imresize
+import cv2
 from keras.utils.data_utils import get_file
-
-# C3D_MEAN_PATH = 'https://github.com/adamcasson/c3d/releases/download/v0.1/c3d_mean.npy'
-# C3D_MEAN_PATH = 'c3d_mean.npy'
 
 def preprocess_input(video):
     """Resize and subtract mean from video input
@@ -39,7 +36,8 @@ def preprocess_input(video):
     # Reshape to 128x171
     reshape_frames = np.zeros((frames.shape[0], 128, 171, frames.shape[3]))
     for i, img in enumerate(frames):
-        img = imresize(img, (128, 171), 'bicubic')
+        img = cv2.resize(img, (171, 128))
+#         img = cv2.resize(img, (128, 171), interpolation='INTER_CUBIC')
         reshape_frames[i, :, :, :] = img
 
     # mean_path = get_file('c3d_mean.npy',                         
@@ -47,7 +45,7 @@ def preprocess_input(video):
     #                      md5_hash='08a07d9761e76097985124d9e8b2fe34')
 
     # Subtract mean   -- need to be changed
-    mean = np.load("./c3d/c3d_mean.npy")
+    mean = np.load("../c3d/c3d_mean.npy")
     reshape_frames -= mean
     # Crop to 112x112
     reshape_frames = reshape_frames[:, 8:120, 30:142, :]
@@ -105,7 +103,7 @@ def C3D(weights='sports1M'):
     model.add(Dense(487, activation='softmax', name='fc8'))
 
     if weights == 'sports1M':
-        model.load_weights("c3d_sports1m.h5")
+        model.load_weights("../c3d/c3d_sports1m.h5")
     
     return model
 

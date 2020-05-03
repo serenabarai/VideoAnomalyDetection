@@ -1,2 +1,6 @@
 *.h5
 demo.py
+/video-anomaly-be/uploads
+/video-anomaly-be/processed
+*.mat
+*.npy

@@ -28,6 +28,7 @@ export class HomeComponent{
       elementInsert.src = src
       elementInsert.type = 'video/mp4'
       this.renderer.appendChild(this.videoElm.nativeElement, elementInsert)
+      this.videoElm.nativeElement.loop = true
       this.videoElm.nativeElement.play()
 
     }, error => {

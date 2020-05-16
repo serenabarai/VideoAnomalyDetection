@@ -8,11 +8,13 @@ import { HomeComponent } from './home/home.component';
 
 import { FileUploadModule } from 'ng2-file-upload';
 import { FormsModule } from '@angular/forms';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

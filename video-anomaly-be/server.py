@@ -1,4 +1,5 @@
-from flask import Flask, request, send_file, Response
+from flask import Flask, request, send_file, Response, render_template,send_from_directory
+from flask_mime import Mime
 import os,io
 from c3d import *
 from classifier import *
@@ -60,11 +61,10 @@ def generateVideo():
     # visualize predictions
     visualize_predictions(cfg.sample_video_path, predictions, save_path)
 
-app = Flask(__name__)
+distFolder = os.path.join('..','video-anomaly-fe','dist','video-anomaly-fe')
 
-@app.route("/")
-def home():
-    return "Hello, World!"
+app = Flask(__name__, static_folder=distFolder, template_folder=distFolder)
+mimetype = Mime(app)
 
 @app.route("/api/upload", methods=['POST'])
 def upload_file():
@@ -87,6 +87,29 @@ def send_processed_video():
     #generateVideo()
     return send_file(filePath, attachment_filename='video.mp4', as_attachment=True)
 
+
+
+
+# @app.route('/', methods=['GET'])
+# def root(path=None):
+#     print('got path', path)
+#     return render_template("index.html", mimetype="application/javascript")
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>', methods=['GET'])
+def static_proxy(path):
+    print('in static proxy', path)
+    ext = path.split('.')[-1]
+    print('\nin static proxy the extension', ext)
+    if (ext == 'js'):
+        return send_from_directory(distFolder, path,mimetype="application/javascript")
+    elif (ext == 'css'):
+        return send_from_directory(distFolder, path,mimetype="text/css")
+    elif (ext == 'ico'):
+        return send_from_directory(distFolder, path,mimetype="image/x-icon")
+    else:
+        return render_template("index.html", mimetype="text/html")
 
     
 if __name__ == "__main__":

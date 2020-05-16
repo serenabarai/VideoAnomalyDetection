@@ -4,3 +4,4 @@ demo.py
 /video-anomaly-be/processed
 *.mat
 *.npy
+*.mp4

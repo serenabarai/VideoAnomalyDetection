@@ -31,7 +31,7 @@ def visualize_clip(clip, convert_bgr=False, save_gif=False, file_path=None):
 
 def visualize_predictions(video_path, predictions, save_path):
     print('Creating animation')
-    frames = get_video_frames(video_path)
+    frames, _ = get_video_frames(video_path)
     assert len(frames) == len(predictions)
 
     fig, ax = plt.subplots(figsize=(5, 5))

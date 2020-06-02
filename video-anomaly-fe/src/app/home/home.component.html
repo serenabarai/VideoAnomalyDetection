@@ -27,6 +27,26 @@
             <div>
                 <video #videoElm width="640" height="480"></video>
             </div>
+
+            <div *ngIf="this.annotations!==null">
+                <table class="table table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col">S.No.</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let ann of this.annotations; let i = index">
+                        <th scope="row">{{i + 1}}</th>
+                        <td>{{ann.start}}</td>
+                        <td>{{ann.end}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+
         </div>
         <div class="col col-lg-2">
           </div>

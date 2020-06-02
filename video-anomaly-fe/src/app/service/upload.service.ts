@@ -10,6 +10,10 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Cache-Control':'no-cache','Content-Type': 'video/mp4' })
 };
 
+const httpOptionsJson = {
+  headers: new HttpHeaders({  'Cache-Control':'no-cache', 'Content-Type': 'application/json' })
+};
+
 const genericRetryStrategy = ({
   maxRetryAttempts = 3,
   scalingDuration = 1000,
@@ -69,6 +73,19 @@ export class UploadService {
   getProcessedVideo(){
     console.log('making get request for video')
     return this.http.get<any>('/api/processed_video', httpOptions)
+                    .pipe(
+                      retryWhen(genericRetryStrategy({
+                        maxRetryAttempts: 10,
+                        scalingDuration: 2000,
+                        excludedStatusCodes: [500,504]
+                      })),
+                      catchError(err => of(err))
+                    )
+  }
+
+  getVideoAnnotations(){
+    console.log('making get request for video annotations')
+    return this.http.get<any>('/api/annotations', httpOptionsJson)
                     .pipe(
                       retryWhen(genericRetryStrategy({
                         maxRetryAttempts: 10,

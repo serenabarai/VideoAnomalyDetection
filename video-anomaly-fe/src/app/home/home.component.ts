@@ -10,8 +10,12 @@ import { timeout, retry } from 'rxjs/operators';
 export class HomeComponent{
   @ViewChild('videoElm') videoElm: ElementRef
 
+  annotations: any
 
-  constructor(public uploadService: UploadService, private renderer: Renderer2) {   }
+
+  constructor(public uploadService: UploadService, private renderer: Renderer2) {   
+    this.annotations = null
+  }
 
   uploadFile(){
     this.uploadService.uploader.uploadAll()
@@ -31,6 +35,13 @@ export class HomeComponent{
       this.videoElm.nativeElement.loop = true
       this.videoElm.nativeElement.play()
 
+    }, error => {
+      console.log(error)
+    })
+
+    this.uploadService.getVideoAnnotations().subscribe(data=>{
+      console.log('received annotations from server', data)
+      this.annotations = data
     }, error => {
       console.log(error)
     })

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, Response, render_template,send_from_directory
+from flask import Flask, request, send_file, Response, render_template,send_from_directory, jsonify
 from flask_mime import Mime
 import os,io
 from c3d import *
@@ -6,6 +6,7 @@ from classifier import *
 from utils.visualization_util import *
 import keras.backend.tensorflow_backend as tb
 from threading import Thread
+import pickle
 # import tensorflow as tf
 
 # build models
@@ -21,14 +22,18 @@ def generateVideo():
     global classifier_model
     video_name = 'video.mp4'
     save_path = os.path.join(cfg.output_folder, video_name)
+    annotations_save_path = os.path.join(cfg.output_folder, 'annotations.pkl')
     #delete existing file in output 
     if(os.path.isfile(save_path)):
         os.remove(save_path)
+    if(os.path.isfile(annotations_save_path)):
+        os.remove(annotations_save_path)
 
     # read video
-    video_clips, num_frames = get_video_clips(cfg.sample_video_path)
+    video_clips, num_frames, fps = get_video_clips(cfg.sample_video_path)
 
     print("Number of clips in the video : ", len(video_clips))
+    print("FPS of video : ", fps)
 
     print("Models initialized")
 
@@ -58,6 +63,12 @@ def generateVideo():
 
     predictions = extrapolate(predictions, num_frames)
 
+    temporalAnnotations = getTemporalAnnotation(predictions, fps, 0.5)
+    #save the temporalAnnotations
+    pickle.dump(temporalAnnotations, open(annotations_save_path, 'wb'))
+
+    # print('temporal annotations:', temporalAnnotations)
+
     # visualize predictions
     visualize_predictions(cfg.sample_video_path, predictions, save_path)
 
@@ -86,6 +97,15 @@ def send_processed_video():
     print('sending processed video',filePath)
     #generateVideo()
     return send_file(filePath, attachment_filename='video.mp4', as_attachment=True)
+
+@app.route("/api/annotations")
+def send_annotations():
+    filePath = os.path.join('processed', 'annotations.pkl')
+    if(not os.path.isfile(filePath) or os.path.getsize(filePath) == 0):
+        return Response(status=404)
+    annotations = pickle.load(open(filePath, 'rb'))
+    print('annotations from route:', annotations)
+    return jsonify(annotations)
 
 
 

@@ -2,7 +2,7 @@
 # https://github.com/damnever/pigar
 
 # server.py: 1
-Flask == 1.1.1
+Flask == 2.3.2
 
 # server.py: 2
 Flask_Mime == 0.1.0
